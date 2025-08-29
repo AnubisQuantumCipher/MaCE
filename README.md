@@ -289,7 +289,9 @@ By following these troubleshooting steps, you should be able to resolve most com
 
 ## Contributing
 
-We welcome contributions to the MaCE project. Please refer to the `CONTRIBUTING.md` file (to be added) for guidelines.
+To maintain the integrity and direction of this project, contributions are currently accepted by invitation or explicit request only. If you have a suggestion, bug report, or feature request, please open an issue on the GitHub repository. If your proposal aligns with the project's roadmap and goals, you may be invited to contribute directly.
+
+For more details, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## License
 

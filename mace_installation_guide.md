@@ -267,7 +267,7 @@ If you encounter issues during installation or usage, consider the following:
 *   **Swift Version**: Confirm that Swift version 6.1.2 is active using `swift --version` and `swiftly use 6.1.2`.
 *   **Error Messages**: Read any error messages carefully. They often provide clues about what went wrong.
 
-For further assistance, refer to the official MaCE documentation or seek help from the MaCE community. 
+For further assistance, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to engage with the MaCE project. 
 
 
 
