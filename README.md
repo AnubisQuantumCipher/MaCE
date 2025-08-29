@@ -189,6 +189,104 @@ mace decrypt "$HOME/Desktop/MyDocument.pdf.mace" --id "my-key-label" \
 *   **Keychain/Touch ID Prompts**: These are expected, as MaCE securely stores private keys in your Keychain.
 *   **No Passphrase Support**: The current build of MaCE (v3.2) is **identity-only** and does not support passphrase-based encryption. It relies on Keychain/HPKE recipients.
 
+## Troubleshooting
+
+This section addresses common issues and provides solutions to help you successfully install and use MaCE.
+
+### 1. `Format.swift` Header Mangle Error
+
+**Problem**: You might encounter a build error related to `Sources/MaceCore/Format.swift` where the conditional import section is malformed, appearing as `#elseif canImport(Glibc)if canImport(Glibc)`.
+
+**Reason**: This typically occurs if a previous search/replace operation incorrectly modified the `#if ... #endif` block for platform-specific imports.
+
+**Solution**: Navigate to your MaCE project directory and execute the following `perl` command. This command will correctly repair the conditional import at the top of `Format.swift`.
+
+```bash
+cd /path/to/your/MaCE_v3.2_Complete_FIXED # Adjust this path as needed
+/usr/bin/perl -0777 -i -pe 'BEGIN{$r="#if canImport(Darwin)\nimport Darwin\n#elseif canImport(Glibc)\nimport Glibc\n#endif"} s/\A(\s*import\s+Foundation\s*)#if.*?#endif/$1$r/s' Sources/MaceCore/Format.swift
+```
+
+To verify the fix, you can inspect the first few lines of `Format.swift`:
+
+```bash
+sed -n '1,10p' Sources/MaceCore/Format.swift
+```
+
+The output should correctly show:
+
+```
+import Foundation
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#endif
+```
+
+Additionally, you might want to remove any backup files created by `perl` (e.g., `.bak` files) to silence warnings during the build process:
+
+```bash
+rm -f Sources/MaceCore/*.bak
+```
+
+### 2. Keychain Error -34018 (Require Biometry)
+
+**Problem**: During `mace keygen` or other Keychain-related operations, you might encounter a `-34018` error, often indicating an issue with biometry requirements (e.g., Touch ID).
+
+**Reason**: Some macOS setups or specific Keychain configurations might be strict about requiring biometry for Keychain access by command-line tools.
+
+**Solution (Temporary Workaround)**: To proceed with the installation and usage, you can temporarily disable the `requireBiometry` flag in `Sources/MaceCore/KeychainStore.swift`. This allows MaCE to interact with the Keychain without strict biometry checks. You can re-enable this later if desired.
+
+```bash
+cd /path/to/your/MaCE_v3.2_Complete_FIXED # Adjust this path as needed
+/usr/bin/perl -0777 -i -pe 's/requireBiometry:\s*Bool\s*=\s*true/requireBiometry: Bool = false/' Sources/MaceCore/KeychainStore.swift
+```
+
+After applying this fix, clean your Swift package build and rebuild MaCE:
+
+```bash
+swift package clean
+swift build --configuration release
+```
+
+If `keygen` still fails with `-34018` after this, you can still use MaCE in passphrase mode (if supported by your build) or consider adjusting Access Control flags in `KeychainStore.swift` more specifically (e.g., using `.userPresence` or providing a `--biometry` toggle).
+
+### 3. General Build and Installation Issues
+
+**Problem**: Build failures or `mace` command not found after installation.
+
+**Reason**: This can be due to various reasons, including incorrect environment setup, missing dependencies, or issues during the Swift build process.
+
+**Solutions**:
+
+*   **Verify PATH**: Ensure that `~/.local/bin` is correctly added to your system's PATH environment variable. After modifying your shell profile (e.g., `~/.zshrc` or `~/.bashrc`), always remember to `source` the file or open a new terminal session.
+
+    ```bash
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc # or ~/.bashrc
+    source ~/.zshrc # or ~/.bashrc
+    ```
+
+*   **Clean Build**: Sometimes, a corrupted build cache can cause issues. Clean the Swift package and rebuild:
+
+    ```bash
+    swift package clean
+    swift build --configuration release
+    ```
+
+*   **Dependency Check**: Re-run the `install_dependencies` and `install_swift` steps from the installation guide to ensure all prerequisites are met and Swift is correctly installed and active.
+
+*   **Error Message Analysis**: Always read the error messages carefully. They often provide specific clues about the nature of the problem (e.g., missing files, compilation errors, linker issues).
+
+*   **Internet Connectivity**: Confirm you have a stable internet connection, as many steps involve downloading resources.
+
+*   **Disk Space**: Ensure you have sufficient disk space (at least 2GB).
+
+*   **Xcode Command Line Tools**: On macOS, verify that Xcode Command Line Tools are fully installed and updated (`xcode-select --install`).
+
+*   **Permissions**: Ensure you have the necessary permissions to install software and write to directories. Use `sudo` where appropriate for system-wide installations, though user-local installation is generally recommended.
+
+By following these troubleshooting steps, you should be able to resolve most common issues encountered during the installation and usage of MaCE.
+
 ## Contributing
 
 We welcome contributions to the MaCE project. Please refer to the `CONTRIBUTING.md` file (to be added) for guidelines.
@@ -196,5 +294,106 @@ We welcome contributions to the MaCE project. Please refer to the `CONTRIBUTING.
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file in the project repository for more details.
+
+
+
+
+## Troubleshooting
+
+This section addresses common issues and provides solutions to help you successfully install and use MaCE.
+
+### 1. `Format.swift` Header Mangle Error
+
+**Problem**: You might encounter a build error related to `Sources/MaceCore/Format.swift` where the conditional import section is malformed, appearing as `#elseif canImport(Glibc)if canImport(Glibc)`.
+
+**Reason**: This typically occurs if a previous search/replace operation incorrectly modified the `#if ... #endif` block for platform-specific imports.
+
+**Solution**: Navigate to your MaCE project directory and execute the following `perl` command. This command will correctly repair the conditional import at the top of `Format.swift`.
+
+```bash
+cd /path/to/your/MaCE_v3.2_Complete_FIXED # Adjust this path as needed
+/usr/bin/perl -0777 -i -pe 'BEGIN{$r="#if canImport(Darwin)\nimport Darwin\n#elseif canImport(Glibc)\nimport Glibc\n#endif"} s/\A(\s*import\s+Foundation\s*)#if.*?#endif/$1$r/s' Sources/MaceCore/Format.swift
+```
+
+To verify the fix, you can inspect the first few lines of `Format.swift`:
+
+```bash
+sed -n '1,10p' Sources/MaceCore/Format.swift
+```
+
+The output should correctly show:
+
+```
+import Foundation
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#endif
+```
+
+Additionally, you might want to remove any backup files created by `perl` (e.g., `.bak` files) to silence warnings during the build process:
+
+```bash
+rm -f Sources/MaceCore/*.bak
+```
+
+### 2. Keychain Error -34018 (Require Biometry)
+
+**Problem**: During `mace keygen` or other Keychain-related operations, you might encounter a `-34018` error, often indicating an issue with biometry requirements (e.g., Touch ID).
+
+**Reason**: Some macOS setups or specific Keychain configurations might be strict about requiring biometry for Keychain access by command-line tools.
+
+**Solution (Temporary Workaround)**: To proceed with the installation and usage, you can temporarily disable the `requireBiometry` flag in `Sources/MaceCore/KeychainStore.swift`. This allows MaCE to interact with the Keychain without strict biometry checks. You can re-enable this later if desired.
+
+```bash
+cd /path/to/your/MaCE_v3.2_Complete_FIXED # Adjust this path as needed
+/usr/bin/perl -0777 -i -pe 's/requireBiometry:\s*Bool\s*=\s*true/requireBiometry: Bool = false/' Sources/MaceCore/KeychainStore.swift
+```
+
+After applying this fix, clean your Swift package build and rebuild MaCE:
+
+```bash
+swift package clean
+swift build --configuration release
+```
+
+If `keygen` still fails with `-34018` after this, you can still use MaCE in passphrase mode (if supported by your build) or consider adjusting Access Control flags in `KeychainStore.swift` more specifically (e.g., using `.userPresence` or providing a `--biometry` toggle).
+
+### 3. General Build and Installation Issues
+
+**Problem**: Build failures or `mace` command not found after installation.
+
+**Reason**: This can be due to various reasons, including incorrect environment setup, missing dependencies, or issues during the Swift build process.
+
+**Solutions**:
+
+*   **Verify PATH**: Ensure that `~/.local/bin` is correctly added to your system's PATH environment variable. After modifying your shell profile (e.g., `~/.zshrc` or `~/.bashrc`), always remember to `source` the file or open a new terminal session.
+
+    ```bash
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc # or ~/.bashrc
+    source ~/.zshrc # or ~/.bashrc
+    ```
+
+*   **Clean Build**: Sometimes, a corrupted build cache can cause issues. Clean the Swift package and rebuild:
+
+    ```bash
+    swift package clean
+    swift build --configuration release
+    ```
+
+*   **Dependency Check**: Re-run the `install_dependencies` and `install_swift` steps from the installation guide to ensure all prerequisites are met and Swift is correctly installed and active.
+
+*   **Error Message Analysis**: Always read the error messages carefully. They often provide specific clues about the nature of the problem (e.g., missing files, compilation errors, linker issues).
+
+*   **Internet Connectivity**: Confirm you have a stable internet connection, as many steps involve downloading resources.
+
+*   **Disk Space**: Ensure you have sufficient disk space (at least 2GB).
+
+*   **Xcode Command Line Tools**: On macOS, verify that Xcode Command Line Tools are fully installed and updated (`xcode-select --install`).
+
+*   **Permissions**: Ensure you have the necessary permissions to install software and write to directories. Use `sudo` where appropriate for system-wide installations, though user-local installation is generally recommended.
+
+By following these troubleshooting steps, you should be able to resolve most common issues encountered during the installation and usage of MaCE.
 
 
