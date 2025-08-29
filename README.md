@@ -87,36 +87,107 @@ For an in-depth understanding of MaCE's design, cryptographic foundations, and s
 
 ## Usage
 
-Basic usage examples:
+MaCE is designed for intuitive command-line usage. Here are common operations:
 
-*   **Generate a key pair**:
+### 1. Generate a Key Pair
+
+MaCE uses public/private key pairs for encryption. The private key is securely stored in your macOS Keychain.
+
+```bash
+mace keygen --label "my-key-label" # Creates keys, prompts Touch ID if needed
+```
+
+To display your public key string (to share with others):
+
+```bash
+mace pub --label "my-key-label"
+```
+
+### 2. Encrypt a File
+
+Encrypt a file to yourself (using your Keychain identity):
+
+```bash
+mace encrypt "$HOME/Desktop/MyDocument.pdf" --to-id "my-key-label" --progress
+```
+
+*   **Output**: By default, the encrypted file will be named `MyDocument.pdf.mace` in the same directory.
+*   **Overwriting**: If the output file already exists, use `--force` to overwrite:
+
     ```bash
-    mace keygen --label "my-first-mace-key"
+    mace encrypt "$HOME/Desktop/MyDocument.pdf" --to-id "my-key-label" --force
     ```
 
-*   **Encrypt a file**: To encrypt a file, you can use the recipient's public key or a Keychain entry.
+*   **Custom Output Name**: Choose a custom name for the encrypted file:
 
     ```bash
-    mace encrypt my_document.txt --to-id "my-first-mace-key" --output my_document.txt.mace
+    mace encrypt "$HOME/Desktop/MyDocument.pdf" --to-id "my-key-label" \
+      --output "$HOME/Desktop/MyDocument (encrypted).pdf.mace"
     ```
 
-    Or, using a public key string:
+*   **Encrypting to a Public Key String**: To encrypt using a recipient's public key string instead of a Keychain label:
 
     ```bash
-    mace encrypt sensitive_data.zip --recipient "mace1<public_key_string>" --output sensitive_data.zip.mace
+    mace encrypt "$HOME/Desktop/MyDocument.pdf" \
+      --recipient "mace1<base64_public_key_string>" \
+      --output "$HOME/Desktop/MyDocument.pdf.mace"
     ```
 
-*   **Decrypt a file**: To decrypt a file, you need access to the private key corresponding to one of the encryption keys.
+*   **Encrypting Folders**: MaCE encrypts single files. For folders, first compress them (e.g., with `tar` or `zip`), then encrypt the archive:
 
     ```bash
-    mace decrypt my_document.txt.mace --id "my-first-mace-key" --output my_document_decrypted.txt
+    # Create an archive of the folder
+    tar -czf "$HOME/Desktop/MyFolder.tar.gz" -C "$HOME/Desktop" "My Folder"
+
+    # Encrypt the archive
+    mace encrypt "$HOME/Desktop/MyFolder.tar.gz" \
+      --to-id "my-key-label" \
+      --output "$HOME/Desktop/MyFolder.tar.gz.mace" \
+      --progress
     ```
 
-    Or, using a private key file:
+### 3. Decrypt a File
+
+To decrypt a file, you need access to the private key corresponding to one of the public keys used for encryption. If the private key is in your Keychain, MaCE will automatically use it.
+
+```bash
+mace decrypt "$HOME/Desktop/MyDocument.pdf.mace" --id "my-key-label" \
+  --output "$HOME/Desktop/MyDocument (decrypted).pdf"
+```
+
+*   **Decrypting Archives**: If you encrypted a folder as an archive, decrypt it and then unpack:
 
     ```bash
-    mace decrypt encrypted_file.mace --private-key private_key.bin --output decrypted_file.txt
+    mace decrypt "$HOME/Desktop/MyFolder.tar.gz.mace" --id "my-key-label" \
+      --output "$HOME/Desktop/MyFolder.tar.gz"
+
+    # Then unpack the archive
+    tar -xzf "$HOME/Desktop/MyFolder.tar.gz" -C "$HOME/Desktop"
     ```
+
+### 4. Other Useful Commands
+
+*   **List Saved Identities**:
+
+    ```bash
+    mace list-ids
+    ```
+
+*   **Encrypt to Multiple Recipients** (mix Keychain labels and raw recipient strings):
+
+    ```bash
+    mace encrypt "$HOME/Desktop/SharedDocument.docx" \
+      --to-id "my-key-label" \
+      --recipient "mace1<another_public_key_string>" \
+      --progress
+    ```
+
+### Notes on Usage
+
+*   **Paths with Spaces**: Paths containing spaces must be **quoted** (as shown in examples) or escaped (`My\ Document.pdf`).
+*   **Overwriting Output**: If the output file already exists and you want to overwrite it, use the `--force` flag.
+*   **Keychain/Touch ID Prompts**: These are expected, as MaCE securely stores private keys in your Keychain.
+*   **No Passphrase Support**: The current build of MaCE (v3.2) is **identity-only** and does not support passphrase-based encryption. It relies on Keychain/HPKE recipients.
 
 ## Contributing
 
