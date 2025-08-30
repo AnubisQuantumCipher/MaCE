@@ -101,9 +101,11 @@ MaCE v3.2 now includes **complete Linux support** with full encryption/decryptio
 ```bash
 git clone https://github.com/AnubisQuantumCipher/MaCE.git
 cd MaCE
-chmod +x install_linux.sh
-./install_linux.sh
+chmod +x install_linux_improved.sh
+./install_linux_improved.sh
 ```
+
+**Note**: Use `install_linux_improved.sh` for the most reliable installation. If you encounter issues, see [INSTALLATION_TROUBLESHOOTING.md](INSTALLATION_TROUBLESHOOTING.md) for solutions.
 
 ### **Manual Installation Steps**
 
