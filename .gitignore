@@ -1,0 +1,27 @@
+# Build artifacts
+.build/
+*.xcodeproj
+*.xcworkspace
+
+# Generated key files (for security)
+mace_private_key.bin
+mace_public_key_bech32.txt
+mace_public_key_hex.txt
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Swift Package Manager
+Package.resolved
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+

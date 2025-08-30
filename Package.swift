@@ -6,6 +6,7 @@ let package = Package(
     platforms: [.macOS(.v15), .iOS(.v16)],
     products: [
         .executable(name: "mace", targets: ["Mace"]),
+        .executable(name: "keygen", targets: ["KeyGen"]),
         .library(name: "MaceCore", targets: ["MaceCore"])
     ],
     dependencies: [
@@ -29,6 +30,12 @@ let package = Package(
             dependencies: [
                 "MaceCore",
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
+            ]
+        ),
+        .executableTarget(
+            name: "KeyGen",
+            dependencies: [
+                "MaceCore"
             ]
         ),
         .testTarget(name: "MaceTests", dependencies: ["MaceCore", "Mace"], resources: [.copy("Fixtures")])

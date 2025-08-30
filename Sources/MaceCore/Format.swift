@@ -1,7 +1,7 @@
 import Foundation
-#if os(Darwin)
+#if canImport(Darwin)
 import Darwin
-#else
+#elseif canImport(Glibc)
 import Glibc
 #endif
 #if canImport(CryptoKit)
