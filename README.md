@@ -251,11 +251,15 @@ sha256sum your_file.pdf restored_file.pdf  # Should be identical!
 
 | Resource | Link | Description |
 |----------|------|-------------|
-| **Installation Guide** | [install_linux_bulletproof.sh](install_linux_bulletproof.sh) | Bulletproof automated installation |
-| **Performance Data** | [PERFORMANCE_RESULTS.md](PERFORMANCE_RESULTS.md) | Real-world benchmarks |
-| **Troubleshooting** | [INSTALLATION_TROUBLESHOOTING.md](INSTALLATION_TROUBLESHOOTING.md) | Solutions for any issues |
-| **Technical Details** | [mace_white_paper.md](mace_white_paper.md) | Cryptographic specifications |
-| **Success Reports** | [MaCE_COMPLETE_SUCCESS_REPORT.md](MaCE_COMPLETE_SUCCESS_REPORT.md) | Verification results |
+| **Installation Guide** | [INSTALL.md](INSTALL.md) | 🛡️ Bulletproof installation guide |
+| **Quick Start** | [QUICK_START.md](QUICK_START.md) | ⚡ Get started in 60 seconds |
+| **Strategic Roadmap** | [ROADMAP.md](ROADMAP.md) | 🚀 Development vision & Apple quantum-secure integration |
+| **Security Roadmap** | [SECURITY_ROADMAP.md](SECURITY_ROADMAP.md) | 🛡️ Security enhancements & audit plans |
+| **Apple Integration** | [APPLE_INTEGRATION.md](APPLE_INTEGRATION.md) | 🍎 Apple ecosystem & quantum-secure APIs |
+| **Performance Data** | [PERFORMANCE_RESULTS.md](PERFORMANCE_RESULTS.md) | 📊 Real-world benchmarks |
+| **Troubleshooting** | [INSTALLATION_TROUBLESHOOTING.md](INSTALLATION_TROUBLESHOOTING.md) | 🔧 Solutions for any issues |
+| **Technical Details** | [mace_white_paper.md](mace_white_paper.md) | 📋 Cryptographic specifications |
+| **Complete Index** | [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) | 📚 All documentation organized |
 
 ---
 
